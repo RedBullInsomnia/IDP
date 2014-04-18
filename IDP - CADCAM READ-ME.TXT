@@ -1,0 +1,41 @@
+LABCENTER PROTEUS TOOL INFORMATION FILE
+=======================================
+
+In case of difficulty, please e-mail support@labcenter.co.uk
+
+Tool set up for Proteus layout 'IDP.LYT'.
+CADCAM generated at 22:47:08 on vendredi 18 avril 2014.
+
+File List
+---------
+Top Copper              : IDP - CADCAM Top Copper.TXT
+
+Photoplotter Setup
+------------------
+Format: RS274X, ASCII, 2.4, imperial, absolute, eob=*, LZO
+Notes:  D=Diameter, S=Side, W=Width, H=Height
+
+D10	CIRCLE	D=80th                                      DRAW
+D11	CIRCLE	D=30th                                      DRAW
+D12	CIRCLE	D=12th                                      DRAW
+D13	CIRCLE	D=20th                                      DRAW
+D14	CIRCLE	D=40th                                      DRAW
+D15	CIRCLE	D=50th                                      FLASH
+D16	CIRCLE	D=10th                                      DRAW
+D17	CIRCLE	D=2.5th                                     DRAW
+D18	DIL	W=60th                H=100th               FLASH
+D19	CIRCLE	D=120th                                     FLASH
+D70	SQUARE	S=50th                                      FLASH
+D71	SMT	W=83th                H=83th                FLASH
+D20	SMT	W=40th                H=100th               FLASH
+D21	SMT	W=35th                H=35th                FLASH
+D22	CIRCLE	D=8th                                       DRAW
+
+NC Drill Setup
+--------------
+Format: ASCII, 2.4, imperial, absolute, eob=<CR><LF>, no zero suppression.
+Notes:  Tool sizes are diameters. Layer sets are in brackets - 0=TOP, 15=BOTTOM, 1-14=INNER.
+
+
+
+[END OF FILE]
