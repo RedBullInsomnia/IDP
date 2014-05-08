@@ -218,5 +218,5 @@ pip-log.txt
 #  Isis  #
 ##########
 # Backup files
-.DBK
-.LBK
+*.DBK
+*.LBK
