@@ -51,9 +51,9 @@ void Dispositif::Action(String action)
     digitalWrite(pin, LOW);
     ledOn = false;
   }
-  else if("harlem" == action)      // Execute an harlem shake
+  else if("harlem" == action)      // Harlem Shake
   {
-    Serial.println("AND THAN WE DO THE HARLEM SHAKE !!!!!");
+    Serial.println("AND THAN WE DO THE HARLEM SHAKE !");
     int i = 3;
     int j = 10;
     while(i > 0)
@@ -75,7 +75,7 @@ void Dispositif::Action(String action)
             j += 1;
         }
 
-        i -=1;
+        i -= 1;
     }
   }
   else if(action == "blink")       // Make the led blink at the speed of page refresh
@@ -95,27 +95,27 @@ void Dispositif::Action(String action)
 
 void Dispositif::setBrightness(int percent)
 {
-    //Serial.print("intensite à emmetre : ");  //Debug code show the initial value
-    //Serial.print(p);                         //Debug code
+    //Serial.print("intensite à emmetre : ");
+    //Serial.print(p);
     float temp =(float) percent/100;
     temp *= 255;
     percent = (int) temp;  //we convert a /100 rate to a /255 cause the arduino can provide 256 shade of powers.
-    //Serial.println("");                      //Debug code
-    //Serial.print("devient : ");              //Debug code
-    //Serial.print(p);                         //Debug code show the real output of arduino
-    //Serial.println("");                      //Debug code
-    //Serial.println(pin);                   //Debug code show the output led
-    analogWrite(pin, percent);                  // provide a special power between 0-5V to light up the led
+    //Serial.println("");
+    //Serial.print("devient : ");
+    //Serial.print(p);
+    //Serial.println("");
+    //Serial.println(pin);
+    analogWrite(pin, percent);		// provide a special power between 0-5V to light up the led
 }
 
-//This method get the zone and the power of the lamp one after one, this can be use to analyse part after part
+
 void Dispositif::Analyse(String code, int zone)
 {
   // if we are still looking to the current zone of the order
   if(orderZone)
   {
-    //Serial.println(code);    //Debug code show the order zone area
-    int temp = code.toInt(); // Convert a string to a int cause the zone is an string
+    //Serial.println(code);
+    int temp = code.toInt();
     // we check we are in the good zone, if it's true, the next part can be read
     if(temp == zone)
     {
@@ -125,25 +125,24 @@ void Dispositif::Analyse(String code, int zone)
     {
       zoneMatch = false;
     }
-    orderZone = false;         // Say we have finished looking the zone
-    //Serial.print(" zone : ");  //Debug code Show the zone of the arduino
-    //Serial.println(zone);      //Debug code
+    orderZone = false;         // Zone checking finished
+    //Serial.print(" zone : ");
+    //Serial.println(zone);      
   }
   else
   {
-    // we are reading the order and the next step is the a new patern than we put orderZone to true than
+    // 
     orderZone = true;
-    //we are in the good zone so we execute the order
+    // if we are in the right zone, we can update the brightness
     if(zoneMatch)
     {
-       //Serial.println(code);  //Debug code show the code that's send from internet to arduino for this zone
-       int p = code.toInt();  // Convert a string to a int cause we need a % in int
+       //Serial.println(code);  // Debug code shows the code that's sent from the internet to arduino for this zone
+       int p = code.toInt();  // Code is a string
        Luminaire(p);
     }
   }
 }
 
-//this method is a method that get the zone of the arduino, the zone of the ordrer and the order. he will get the result quiqly but need some works from the user
 void Dispositif::Analyse(String codeZone, String code, int zone)
 {
   int temp = codeZone.toInt();
@@ -152,7 +151,7 @@ void Dispositif::Analyse(String codeZone, String code, int zone)
     int p = code.toInt();
   }
 }
-//this method is a method that get the zone of the arduino, the zone of the ordrer and the order. he will get the result quiqly and only use int so the user must convert information himself
+
 void Dispositif::Analyse(int codeZone, int code, int zone)
 {
   if(codeZone == zone)

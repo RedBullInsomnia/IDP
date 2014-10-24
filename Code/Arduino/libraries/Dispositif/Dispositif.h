@@ -23,17 +23,18 @@ class Dispositif
                 void setBrightness(int percent);
 
                 /*
-                 *
+                 * This method get the zone and the power of the lamp one after one, this can be use to analyse part after part
                  */
                 void Analyse(String code, int zone);
 
                 /*
-                 *
+                 * This method is a method that get the zone of the arduino, the zone of the ordrer and the order. he will get the result quiqly but need some works from the user
                  */
                 void Analyse(String codeZone, String code, int zone);
 
                 /*
-                 *
+                 * Gets the zone of the driver, the zone of the order and the order itself. 
+				 * he will get the result quickly and only use int so the user must convert information himself
                  */
                 void Analyse(int codeZone, int code, int zone);
 
@@ -47,7 +48,7 @@ class Dispositif
                 // To know if we see the zone of order or the order.
                 boolean orderZone;
 
-                // To know if the current zone order is the same as arduino zone.
+                // To know if the current zone order is the same as Arduino zone.
                 boolean zoneMatch;
 };
 
