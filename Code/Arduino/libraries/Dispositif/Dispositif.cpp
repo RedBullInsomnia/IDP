@@ -1,38 +1,14 @@
-/*
-  Dispositif.cpp
-  Library for the IDP project "Dispositif Lumineux"
-  Created on 24/10/2014.
-
-  *************************** Description **************************************
-  This library contains several methods to simplify the main code of the Arduino
-  Multiple zones can easily be controlled by the same Arduino because the zone
-  of the Arduino is asked at every request that make the arduino completely
-  compatible with other technology than Wi-Fi if we use the same information
-  packaging.
-
-  ***************************** Methods ****************************************
-  Super user / Action:
-        the information must be a special string from this list:
-                -jour   : turn the light on.
-                -nuit   : turn the light off.
-                -harlem : turn the light on than off on a special frequency
-                            which progressively gets lower.
-                -blink  : turn the light on if it's off and off if it's on each
-                            time the Arduino asks for information from the
-                            server.
-  analyse:
-        this method will analyse the zone the two different zone and will turn on the ligh if the two zones match. the zone of the arduino must be an int but the zone of the order is a string (easyly to get it but the code is modulable). The order is a string wich contain an int between 0 and 100 (we can put higher but won't produce it).
-*/
-
 #include "Arduino.h"
 #include "Dispositif.h"
 
-Dispositif::Dispositif(int pin)
+Dispositif::Dispositif()
 {
-  pin = pin;
-  Serial.println(pin);
-  Serial.println(pin);
-  pinMode(pin, OUTPUT);
+  pin1 = 5;
+  pin2 = 6;
+  pin3 = 9;
+  pinMode(9, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(5, OUTPUT);
 
   ledOn = false;
   orderZone = true;
@@ -43,34 +19,33 @@ void Dispositif::Action(String action)
 {
   if("jour" == action)             // Turn the light on
   {
-    digitalWrite(pin, HIGH);
+    digitalWrite(pin1, HIGH);
     ledOn = true;
   }
   else if("nuit" == action)        // Turn the light off
   {
-    digitalWrite(pin, LOW);
+    digitalWrite(pin1, LOW);
     ledOn = false;
   }
   else if("harlem" == action)      // Harlem Shake
   {
-    Serial.println("AND THAN WE DO THE HARLEM SHAKE !");
     int i = 3;
     int j = 10;
     while(i > 0)
     {
         while(j > 0)
         {
-            digitalWrite(pin,HIGH);
+            digitalWrite(pin1,HIGH);
             delay(j*10);
-            digitalWrite(pin,LOW);
+            digitalWrite(pin1,LOW);
             delay(j*10);
             j -= 1;
         }
         while(j < 10)
         {
-            digitalWrite(pin,HIGH);
+            digitalWrite(pin1,HIGH);
             delay(j*10);
-            digitalWrite(pin,LOW);
+            digitalWrite(pin1,LOW);
             delay(j*10);
             j += 1;
         }
@@ -78,40 +53,33 @@ void Dispositif::Action(String action)
         i -= 1;
     }
   }
-  else if(action == "blink")       // Make the led blink at the speed of page refresh
+  else if(action == "blink")	// LED blinks at the speed of page refresh
   {
      if(ledOn)
-     {
-       digitalWrite(pin, LOW);
-       ledOn = false;
-     }
+       digitalWrite(pin1, LOW);
      else
-     {
-       digitalWrite(pin, HIGH);
-       ledOn = true;
-     }
+       digitalWrite(pin1, HIGH);
+	   
+	 ledOn = !ledOn;
   }
 }
 
-void Dispositif::setBrightness(int percent)
+void Dispositif::setBrightness(int number, int percent)
 {
-    //Serial.print("intensite à emmetre : ");
-    //Serial.print(p);
-    float temp =(float) percent/100;
-    temp *= 255;
-    percent = (int) temp;  //we convert a /100 rate to a /255 cause the arduino can provide 256 shade of powers.
-    //Serial.println("");
-    //Serial.print("devient : ");
-    //Serial.print(p);
-    //Serial.println("");
-    //Serial.println(pin);
-    analogWrite(pin, percent);		// provide a special power between 0-5V to light up the led
+    // Convert percentage into [0 255] range
+    float temp = (float)percent / 100 * 255;
+    
+    int pin = 5;
+    if (1 == number)
+      pin = 6;
+    else if (2 == number)
+      pin = 9;
+    
+    analogWrite(pin, (int)temp);
 }
 
-
-void Dispositif::Analyse(String code, int zone)
+void Dispositif::parseMessage(String code, int zone)
 {
-  // if we are still looking to the current zone of the order
   if(orderZone)
   {
     //Serial.println(code);
@@ -125,37 +93,16 @@ void Dispositif::Analyse(String code, int zone)
     {
       zoneMatch = false;
     }
-    orderZone = false;         // Zone checking finished
-    //Serial.print(" zone : ");
-    //Serial.println(zone);      
+    orderZone = false; 
   }
   else
-  {
-    // 
+  { 
     orderZone = true;
     // if we are in the right zone, we can update the brightness
     if(zoneMatch)
     {
-       //Serial.println(code);  // Debug code shows the code that's sent from the internet to arduino for this zone
        int p = code.toInt();  // Code is a string
-       Luminaire(p);
+       setBrightness(0, p);
     }
-  }
-}
-
-void Dispositif::Analyse(String codeZone, String code, int zone)
-{
-  int temp = codeZone.toInt();
-  if(temp == zone)
-  {
-    int p = code.toInt();
-  }
-}
-
-void Dispositif::Analyse(int codeZone, int code, int zone)
-{
-  if(codeZone == zone)
-  {
-    Luminaire(code);
   }
 }

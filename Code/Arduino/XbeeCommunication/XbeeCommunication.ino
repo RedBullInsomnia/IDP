@@ -1,25 +1,24 @@
-//We include the library of the control of the light.
-#include <Dispositif.h>
+#include <Dispositif.h> // Our custom library
 
-//this is the id of the arduino in our tree.
-int idNode = 2;
+int idNode = 2; 		// ID of the Dispositif in our tree
 
-int zone = 1;         //this is the zone in which the arduino is.
-Dispositif lampe(9);  //this is the pin on wich the light is plug.
+int zone = 1;         	// Our Arduino is in zone 1
+Dispositif lampe(9);  	// LED is connected to PIN 9
 
 String currentLine = "";              // string to hold the text from server.
 String code = "";                     // string to hold the code sent from server.
-String currentZone = "";              // tempory, zone of the current order.
+String currentZone = "";              // temporary, zone of the current order.
 boolean readingCode = false;          // bool to know if we are reading an order.
 boolean readingZone = true;           // bool to know if we read the zone or the order.
 boolean readingSudo = false;          // bool to know if we are reading a sudo order.
 
-String node = "";                     //tempory, node id of the one we must swap.
-boolean readingNode = true;           //bool to know if we are reading the Node when swaping.
+/* Variables used for swapping */
+String node = "";                     
+boolean readingNode = true;           
 
 void setup()
 {
-  //resereve space for stings;
+  //reserve space for strings;
   currentLine.reserve(256);
   code.reserve(256);
   
@@ -29,20 +28,19 @@ void setup()
 
 void loop()
 {
-  //if we got data sent by the web server that wait.
-  if (Serial.available() > 0) 
+  if (Serial.available() > 0)
   {
-    char c = Serial.read();  //read the current char send from internet.
-    currentLine += c;        //ad the current char to the buffer string.
+    char c = Serial.read();  //read the current char sent from internet.
+    currentLine += c;        //add the current char to the buffer string.
 
     // if you got a "!" character, you've reached the end of an order and must analyse the situation.
-    if (c != '!') //The order continue if we don't see a '!'.
+    if (c != '(' && c!= ')' && c != ',') //The order continue if we don't see a '!'.
     {
-      if(c == '$') //we saw an action code cause the $ say it's an action.
+      if(c == '$') //we saw an action code because the $ says it's an action.
       {
-        lampe.Action(code);   //we analyse the code we receive.
-        Serial.print(code);   //and send it to the other arduino.
-        Serial.println("$");  //and say it's an action to the other arduino.
+        lampe.Action(code);   //we analyse the code we received.
+        Serial.print(code);   //and send it to the other arduinos.
+        Serial.println("$");  //and say it's an action to the other arduinos.
         
         code = "";            //clear the temp message to allow another to be read.
       }
@@ -70,12 +68,12 @@ void loop()
         code = "";   //we clear the temp string to allow other data to be stored.
         readingNode = !readingNode;      //we reset the temp data.
       }
-      else  //if we don't ended a spécial type of data, we just add the current caracter to the temp to be analysed whend we reach a special caracter.
+      else  //if we don't ended a special type of data, we just add the current caracter to the temp to be analysed whend we reach a special caracter.
       {
         code += c; //we store it to the temp.
       }
     }
-    else     //the order 66 is given !!! The '!' is reach and we reach the end of a part of an usual code.
+    else     // The '!' is reached and we reach the end of a part of an usual code.
     {       
       if(readingZone) //if we are reading the zone of the order, we put it in a temp.
       {

@@ -1,55 +1,65 @@
-#ifndef Dispositif_h
-#define Dispositif_h
+/*
+  Dispositif.hpp
+  Library for the IDP project "Dispositif Lumineux"
+  Created on 24/10/2014.
+
+  *************************** Description **************************************
+  This library contains several methods to simplify the main code of the Arduino
+  Multiple zones can easily be controlled by the same Arduino because the zone
+  of the Arduino is asked at every request that make the arduino completely
+  compatible with other technology than Wi-Fi if we use the same information
+  packaging.
+*/
+
+#ifndef DISPOSITIF_H
+#define DISPOSITIF_H
 
 #include "Arduino.h"
 
-
 class Dispositif
 {
-        public:
-                /*
-                 * Constructs a led driver on pin : pin
-                 */
-                Dispositif(int pin);
+  public:
+    /*
+     * Constructor of a led driver on pin "pin (int)"
+     */
+    Dispositif(int pin);
 
-                /*
-                 * Execute one of the following : jour, nuit, blink, harlem
-                 */
-                void Action(String action);
+    /*
+     * SUDO operation
+             * Execute one of the following sudo actions (string) :
+     * 	- jour : turn the light on
+     *  - nuit : turn the light off
+     *  - blink : invert brightness each time the Arduino connects 
+     *				to the server 
+     *  - harlem : turn the light on then off on a special frequency
+     *           which progressively gets lower.
+     */
+      void Action(String action);
 
-                /*
-                 * Set Brightness of Led Driver (percentage as input)
-                 */
-                void setBrightness(int percent);
+    /*
+     * Set Brightness of Led Driver (percentage as input)
+     */
+    void setBrightness(int number, int percent);
 
-                /*
-                 * This method get the zone and the power of the lamp one after one, this can be use to analyse part after part
-                 */
-                void Analyse(String code, int zone);
+    /*
+     * Parses the message sent from the remote server.
+     * Message takes the following form : 
+     * zone#(r%, g%, b%)zone#(r%, g%, b%)zone#(r%, g%, b%)...
+     */
+    void parseMessage(String code, int zone);
 
-                /*
-                 * This method is a method that get the zone of the arduino, the zone of the ordrer and the order. he will get the result quiqly but need some works from the user
-                 */
-                void Analyse(String codeZone, String code, int zone);
+  private:
+    // Pins on which the output will be located
+    int pin1, pin2, pin3;
 
-                /*
-                 * Gets the zone of the driver, the zone of the order and the order itself. 
-				 * he will get the result quickly and only use int so the user must convert information himself
-                 */
-                void Analyse(int codeZone, int code, int zone);
+    // True if Led 0 is on, while on SUDO mode
+    boolean ledOn;
 
-        private:
-                // Ouput pin on which the output will be located
-                int pin;
+    // To know if we see the zone of order or the order.
+    boolean orderZone;
 
-                // True if Led is on, while on SUDO mode
-                boolean ledOn;
-
-                // To know if we see the zone of order or the order.
-                boolean orderZone;
-
-                // To know if the current zone order is the same as Arduino zone.
-                boolean zoneMatch;
+    // To know if the current zone order is the same as Arduino zone.
+    boolean zoneMatch;
 };
 
 #endif
