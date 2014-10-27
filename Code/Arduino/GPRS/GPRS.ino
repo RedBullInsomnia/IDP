@@ -72,11 +72,11 @@ void setup()
 	}
     else
     {
-      delay(2000);			// wait for 1 sec and then retry
+      delay(2000);			// wait for 2 secs and then retry
     }
   }
   //Serial.println("connected");
-  connectToData();          // We can connect to the server !
+  connectToData();          // We can now retrieve the data 
 }
 
 void loop()
@@ -94,7 +94,7 @@ void loop()
 
     // What are we gonna parse ?
     if (currentLine.endsWith("<order>"))
-    {
+    {s
       readingCode = true;
       code = "";
       return; // break out of the loop so 'c' isn't added to the order
@@ -134,7 +134,7 @@ void loop()
         
         if (currentZone == zone)
         {
-          dispositif.setBrightness(count, code.ToInt());
+          dispositif.setBrightness(count, code.toInt());
           code = "";
         }
         count++;
@@ -148,7 +148,7 @@ void loop()
         
         if (currentZone == zone)
         { 
-          dispositif.setBrightness(count, code.ToInt());
+          dispositif.setBrightness(count, code.toInt());
           code = "";
         }
         count = 0;
@@ -217,16 +217,16 @@ void connectToData()
 void changeZone(char c)
 {
   // if you got a "!" character, you've reached the end of an order part.
-  if (c != '!') //The order continue if we don't have a '!' and we can add the current char in the temp.
+  if (c != '!')
   {
      code += c;
   }
-  else         //the order 66 is given !!!we reach an end of a part of the swapping zone.
+  else         //we reach an end of a part of the swapping zone.
   {
-    if(readingID) //if we are reading the zone of the order, we put it in a temp
+    if(readingID) // if we are reading the zone of the order, we put it in a temp
     {
-      networkID = code;   //we save the fisrt part
-      readingID = false;  //update information about which part we read
+      networkID = code;   // we save the first part
+      readingID = false;  // update information about which part we read
       readingNode = true;
     }
     else if(readingNode) //if we are reading the node that must change zone
@@ -234,13 +234,13 @@ void changeZone(char c)
       NodeID = code;        //save the second part
       readingNode = false;  //update status of reading part
     }
-    else           //else we are reading the new zone and can see if we are in the good id and if other nodes will need this
+    else           // reading the new zone and can see if we are in the good id and if other nodes will need this
     {
-      if(networkID == String(id)) //id match 
+      if(networkID == String(id)) // id match 
       {
-        if(NodeID == String(idNode)) //it's the current node
+        if(NodeID == String(idNode)) // it's the current node
         {
-          zone = code.toInt();  //we change the zone of this node.
+          zone = code.toInt();  // we change the zone of this node.
         }
         else  //it's the node of a xbee on our tree than we send them the order
         {
