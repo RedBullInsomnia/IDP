@@ -51,6 +51,9 @@ class Dispositif
   private:
     // Pins on which the output will be located
     int pin1, pin2, pin3;
+    
+    // zone of the Driver
+    int zone;
 
     // True if Led 0 is on, while on SUDO mode
     boolean ledOn;

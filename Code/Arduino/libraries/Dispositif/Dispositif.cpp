@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "SD.h"
 #include "Dispositif.h"
 
 Dispositif::Dispositif()
@@ -6,10 +7,16 @@ Dispositif::Dispositif()
   pin1 = 5;
   pin2 = 6;
   pin3 = 9;
+  
   pinMode(9, OUTPUT);
   pinMode(6, OUTPUT);
   pinMode(5, OUTPUT);
 
+  if(!SD.begin());
+    // TO DO : report to website.
+  
+  zone = 
+  
   ledOn = false;
   orderZone = true;
   zoneMatch = false;

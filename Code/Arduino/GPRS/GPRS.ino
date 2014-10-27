@@ -14,7 +14,7 @@
 int id = 1;                  	// ID of the arduinoServer
 int idNode = 2;              	// ID of the Arduino in the Xbee tree
 
-Dispositif dispositif(9);		// start a new LED driver
+Dispositif dispositif();		// start a new LED driver
 int zone = 1;                   // zone#
 
 //++++++++++++++++++ Data specific to our web site +++++++++++++++++++++++++++//
@@ -47,11 +47,11 @@ boolean readingNode = false;
 
 void setup() 
 {
-  //reserve space for strings;
+  // reserve space for strings;
   currentLine.reserve(256);
   code.reserve(256);
 
-  //Initialize serial to start the Xbee communication at 9600 bauds.
+  // Initialize serial to start the Xbee communication at 9600 bauds.
   Serial.begin(9600); 
 
   //Serial.println("start GPRS"); // Debug
