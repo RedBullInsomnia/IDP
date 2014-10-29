@@ -20,9 +20,11 @@ class Dispositif
 {
   public:
     /*
-     * Constructor of a led driver on pin "pin (int)"
+     * Constructor of a led driver on pins 5, 6 and 9 and assigns the zone that
+     * is written on the SD card.
+     *
      */
-    Dispositif(int pin);
+    Dispositif();
 
     /*
      * SUDO operation

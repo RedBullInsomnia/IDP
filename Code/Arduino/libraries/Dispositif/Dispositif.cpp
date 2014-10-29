@@ -15,7 +15,17 @@ Dispositif::Dispositif()
   if(!SD.begin());
     // TO DO : report to website.
   
-  zone = 
+  FILE file = SD.open("config.txt", FILE_READ);
+  
+  String line;
+  line.reserve(255);
+  char c = file.read();
+  while(c != '\n')
+  {
+    line += c;
+    c = file.read();
+  }
+  zone = line;
   
   ledOn = false;
   orderZone = true;
