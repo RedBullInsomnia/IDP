@@ -20,15 +20,21 @@ class Dispositif
 {
   public:
     /*
-     * Constructor of a led driver on pins 5, 6 and 9 and assigns the zone that
-     * is written on the SD card.
-     *
+     * Constructor of a led driver on pins 5, 6 and 9 and assigns the zone, id
+     * and idNode that are stored in the config.txt on the SD card.
      */
     Dispositif();
+    
+    /*
+     * Constructor of a led driver on pins 5, 6 and 9 and assigns the zone, id
+     * and idNode that are passed as parameters. Zone, id and idNode are also
+     * stored in the config.txt file.
+     */
+    Dispositif(String zone, String id, String idNode);
 
     /*
      * SUDO operation
-             * Execute one of the following sudo actions (string) :
+     * Execute one of the following sudo actions (string) :
      * 	- jour : turn the light on
      *  - nuit : turn the light off
      *  - blink : invert brightness each time the Arduino connects 
@@ -36,26 +42,28 @@ class Dispositif
      *  - harlem : turn the light on then off on a special frequency
      *           which progressively gets lower.
      */
-      void Action(String action);
+    void Action(String action);
 
     /*
      * Set Brightness of Led Driver (percentage as input)
      */
-    void setBrightness(int number, int percent);
+    void setBrightness(uint8_t number, uint8_t value);
 
     /*
      * Parses the message sent from the remote server.
      * Message takes the following form : 
      * zone#(r%, g%, b%)zone#(r%, g%, b%)zone#(r%, g%, b%)...
      */
-    void parseMessage(String code, int zone);
+    void parseMessage(String code);
+    
+    //void digitalWriteC(uint8_t pin, uint8_t val);
+    
+    // zone of the Driver
+    String zone, id, idNode;
 
   private:
     // Pins on which the output will be located
-    int pin1, pin2, pin3;
-    
-    // zone of the Driver
-    int zone;
+    uint8_t pin1, pin2, pin3;
 
     // True if Led 0 is on, while on SUDO mode
     boolean ledOn;

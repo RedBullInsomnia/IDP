@@ -1,5 +1,7 @@
-#include <GSM.h>			// GSM shield
-#include <Dispositif.h>		// Our library
+#include <GSM.h>			      // GSM shield
+#include <Dispositif.h>		  // Our library
+#include <SD.h>
+
 
 //+++++++++++++++++++ Modify if you change the GSM provider ++++++++++++++++++//
 // PIN number of the SIM card
@@ -11,18 +13,16 @@
 #define GPRS_PASSWORD ""     // replace with your GPRS password
 
 //++++++++++++++++++ Data specific to the current Arduino ++++++++++++++++++++//
-int id = 1;                  	// ID of the arduinoServer
-int idNode = 2;              	// ID of the Arduino in the Xbee tree
-
-Dispositif dispositif();		// start a new LED driver
-int zone = 1;                   // zone#
+// Zone = 1, id = 1, idZone = 2
+Dispositif dispositif("1", "1", "2");
 
 //++++++++++++++++++ Data specific to our web site +++++++++++++++++++++++++++//
 //IPAddress server(192,168,0,101);// IP for the website, useful when using localhost)
-char server[] = "http://dilui.eripm.be/";  // name address of website, thx DNS
-
-char path[] = "http://dilui.eripm.be/"; // the path where we found the data.
-int port = 80; // the port, 80 for HTTP.
+//char server[] = "http://dilui.eripm.be/";  // name address of website, thx DNS
+//char path[] = "http://dilui.eripm.be/"; // the path where we found the data.
+#define server "http://dilui.eripm.be/"  // name address of website, thx DNS
+#define path "http://dilui.eripm.be/" // the path where we found the data.
+#define port 80 // the port, 80 for HTTP.
 
 // initialize the library instances specific to the GSM/GPRS shield.
 GSMClient client;
@@ -36,14 +36,10 @@ String currentZone = "";          // temporary, zone of the current order.
 boolean readingZone = true;
 boolean readingCode = false;      // true when parsing an <order>
 boolean readingSudo = false;      // true when parsing an <sudorder>
-int count = 0;
+uint8_t count = 0;
 
 /* ChangeZone() variables */
 boolean readingSwap = false;
-String networkID = "";            // contains the ID of the concerned network
-String NodeID = "";               // contains the node ID of the order.
-boolean readingID = true;
-boolean readingNode = false;
 
 void setup() 
 {
@@ -56,7 +52,7 @@ void setup()
 
   //Serial.println("start GPRS"); // Debug
 
-  delay(1000);                 // wait 1 sec for Leonardo arduino.
+  //delay(1000);                 //uncomment if used on Leonardo arduino.
 
   /* 
   Start GSM shield
@@ -94,7 +90,7 @@ void loop()
 
     // What are we gonna parse ?
     if (currentLine.endsWith("<order>"))
-    {s
+    {
       readingCode = true;
       code = "";
       return; // break out of the loop so 'c' isn't added to the order
@@ -118,21 +114,21 @@ void loop()
       if ('(' == c) // when getting a '(' it means we finished getting the zone#
       {
         // Repeat order on Xbee
-        serial.print(code);
-        serial.print("(");
+        Serial.print(code);
+        Serial.print("(");
         
         currentZone = code;
         code = "";
         readingCode = true;
       }
       
-      if (',' == c)
+      else if (',' == c)
       {
         // Repeat to Xbee
-        serial.print(code);
-        serial.print(",");
+        Serial.print(code);
+        Serial.print(",");
         
-        if (currentZone == zone)
+        if (currentZone == dispositif.zone)
         {
           dispositif.setBrightness(count, code.toInt());
           code = "";
@@ -140,13 +136,13 @@ void loop()
         count++;
       }
       
-      if (')' == c)
+      else if (')' == c)
       {
         // Repeat to Xbee
         Serial.print(code);
         Serial.print(")");
         
-        if (currentZone == zone)
+        if (currentZone == dispositif.zone)
         { 
           dispositif.setBrightness(count, code.toInt());
           code = "";
@@ -154,7 +150,7 @@ void loop()
         count = 0;
       }
       
-      if ('<' == c) // end of order
+      else if ('<' == c) // end of order
         readingCode = false;
       
       code += c;
@@ -202,7 +198,7 @@ void connectToData()
     client.print("GET ");           //we ask to get the path we ask.
     client.print(path);
     client.print("&id=");
-    client.println(id);
+    client.println(dispositif.id);
     //client.println(" HTTP/1.1");
     client.print("Host: ");         //we show from where we want the page.
     client.println(server);
@@ -216,6 +212,10 @@ void connectToData()
 //this method is used to swap the current zone of a specific arduino.
 void changeZone(char c)
 {
+  String networkID = "";            // contains the ID of the concerned network
+String NodeID = "";               // contains the node ID of the order.
+boolean readingID = true;
+boolean readingNode = false;
   // if you got a "!" character, you've reached the end of an order part.
   if (c != '!')
   {
@@ -236,11 +236,11 @@ void changeZone(char c)
     }
     else           // reading the new zone and can see if we are in the good id and if other nodes will need this
     {
-      if(networkID == String(id)) // id match 
+      if(networkID == dispositif.id) // id match 
       {
-        if(NodeID == String(idNode)) // it's the current node
+        if(NodeID == dispositif.idNode) // it's the current node
         {
-          zone = code.toInt();  // we change the zone of this node.
+          dispositif.zone = code;  // we change the zone of this node.
         }
         else  //it's the node of a xbee on our tree than we send them the order
         {
@@ -255,8 +255,9 @@ void changeZone(char c)
       networkID = "";             //reset the temp data.
       NodeID = "";
     }
-    code = "";                      //refresh the temp data that contain the code.
+    code = "";                    //refresh the temp data that contain the code.
   }
+  
   if (c == '<') //The order list is ended
   {
     readingSwap = false;              //we aren't reding order anymore.
