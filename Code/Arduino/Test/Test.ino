@@ -1,7 +1,5 @@
 #include <GSM.h>	      // GSM shield
-#include <SPI.h>
-#include <SdFat.h>
-//#include <MemoryFree.h>
+#include <EEPROM.h>
 #include <Dispositif.h>	      // Our library
 
 //+++++++++++++++++++ Modify if you change the GSM provider ++++++++++++++++++//
@@ -15,12 +13,9 @@
 
 //++++++++++++++++++ Data specific to the current Arduino ++++++++++++++++++++//
 // Zone = 1, id = 1, idNode = 2
-Dispositif dispositif("1", "1", "2");
+Dispositif dispositif;
 
 //++++++++++++++++++ Data specific to our web site +++++++++++++++++++++++++++//
-//IPAddress server(192,168,0,101);// IP for the website, useful when using localhost)
-//char server[] = "http://dilui.eripm.be/";  // name address of website, thx DNS
-//char path[] = "http://dilui.eripm.be/"; // the path where we found the data.
 #define server "dilui.eripm.be"  // name address of website, thx DNS
 #define path "http://dilui.eripm.be/?src=arduino" // the path where we found the data.
 #define port 80 // the port, 80 for HTTP.
@@ -90,6 +85,7 @@ void loop()
     
     if (code.endsWith("<o>"))
     {
+      Serial.print("<o>");
       while((c = client.read()) != '<')
       {
         // Zone
@@ -113,7 +109,7 @@ void loop()
         Serial.print(code); // print out the zone
         Serial.print(F(","));
         
-        if (currentZone == dispositif.zone)
+        if (currentZone.toInt() == dispositif.zone)
           dispositif.setBrightness(0, code.toInt());
         
         code = "";
@@ -128,7 +124,7 @@ void loop()
         Serial.print(code); // print out the zone
         Serial.print(F(","));
         
-        if (currentZone == dispositif.zone)
+        if (currentZone.toInt() == dispositif.zone)
           dispositif.setBrightness(1, code.toInt());
         
         code = "";
@@ -143,10 +139,10 @@ void loop()
         Serial.print(code); // print out the zone
         Serial.print(F(")"));
         
-        if (currentZone == dispositif.zone)
+        if (currentZone.toInt() == dispositif.zone)
           dispositif.setBrightness(2, code.toInt());
       }
-      Serial.prinln("");
+      Serial.println("<o>");
     }
   }
   
@@ -158,7 +154,7 @@ void loop()
     connectToData();
   }
   
-  delay(600000); // wait for 10 mins before asking for new data.
+  delay(10000); // wait for x mins before asking for new data.
 }
 
 //connect to the website and get the page reserved for the Arduino

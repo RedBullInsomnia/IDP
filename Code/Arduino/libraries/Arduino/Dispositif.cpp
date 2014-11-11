@@ -1,5 +1,5 @@
 #include "Dispositif.h"
-#include <SDFat.h>
+#include <EEPROM.h>
 
 #ifndef sbi
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
@@ -14,83 +14,33 @@ Dispositif::Dispositif()
   pinMode(pin1, OUTPUT); // absolutely necessary because we use a custom PWM
   pinMode(pin2, OUTPUT);
   pinMode(pin3, OUTPUT);
-  
-  //ledOn = false;
-  orderZone = true;
-  zoneMatch = false;
-  
-  SdFat sd;
-  if(!sd.begin(4, SPI_HALF_SPEED));
-    // TO DO : report to website that SD card is malfunctioning
-  
-  // Read config file, to configure Driver
-  SdFile file;
-  file.open("config.txt", O_READ);
-  
-  //String line = "";
-  //line.reserve(255);
-  
-  // Zone of the LED Driver
-  char c = file.read();
-  while(c != '\n')
-  {
-    zone += c;
-    c = file.read();
-  }
-  //zone = line;//.toInt();
-  
-  // ID of the LED Driver
-  //line = "";
-  c = file.read();
-  while(c != '\n')
-  {
-    id += c;
-    c = file.read();
-  }
-  //id = line;//.toInt();
-  
-  // ID of the Arduino in the Xbee tree
-  //line = "";
-  c = file.read();
-  while(c != '\n')
-  {
-    idNode += c;
-    c = file.read();
-  }
-  //idNode = line;//.toInt();            	
-  
-  file.close();
+
+  setBrightness(0, 50);
+  setBrightness(1, 50);
+  setBrightness(2, 50);
+
+  zone = EEPROM.read(0);
+  id = EEPROM.read(1);
+  idNode = EEPROM.read(2);
 }
 
-Dispositif::Dispositif(String zone, String id, String idNode)
-{ 
+Dispositif::Dispositif(uint8_t zone, uint8_t id, uint8_t idNode)
+{
   zone = zone;
   id = id;
   idNode = idNode;
-  
-  //ledOn = false;
-  orderZone = true;
-  zoneMatch = false;
-  
-  pinMode(pin1, OUTPUT); 
+
+  pinMode(pin1, OUTPUT);
   pinMode(pin2, OUTPUT);
   pinMode(pin3, OUTPUT);
 
-  SdFat sd;
-  if(!sd.begin(4, SPI_HALF_SPEED));
-    // TO DO : report to website that SD card is malfunctioning
+  setBrightness(0, 50);
+  setBrightness(1, 50);
+  setBrightness(2, 50);
 
-  if(sd.exists("config.txt"))
-    sd.remove("config.txt");
-  
-  SdFile file;
-  file.open("config.txt", O_WRITE);
-  
-  file.println(zone);
-  file.println(id);
-  file.println(idNode);
-  
-  file.close();
+  EEPROM.write(0, zone);
+  EEPROM.write(1, id);
+  EEPROM.write(2, idNode);
 }
 
 /*void Dispositif::Action(String action)
@@ -137,7 +87,7 @@ Dispositif::Dispositif(String zone, String id, String idNode)
        digitalWrite(pin1, LOW);
      else
        digitalWrite(pin1, HIGH);
-	   
+
 	 ledOn = !ledOn;
   }
 }*/
@@ -162,7 +112,7 @@ void Dispositif::setBrightness(uint8_t number, uint8_t value)
     }
 }
 
-void Dispositif::parseMessage(String code)
+/*void Dispositif::parseMessage(String code)
 {
   if(orderZone)
   {
@@ -177,10 +127,10 @@ void Dispositif::parseMessage(String code)
     {
       zoneMatch = false;
     }
-    orderZone = false; 
+    orderZone = false;
   }
   else
-  { 
+  {
     orderZone = true;
     // if we are in the right zone, we can update the brightness
     if(zoneMatch)
@@ -189,12 +139,12 @@ void Dispositif::parseMessage(String code)
        setBrightness(0, code.toInt());
     }
   }
-}
+}*/
 
-void Dispositif::changeZone(String newZone)
+/*void Dispositif::changeZone(String newZone)
 {
   zone = newZone;
-}
+}*/
 
 /*void Dispositif::digitalWriteC(uint8_t pin, uint8_t val)
 {

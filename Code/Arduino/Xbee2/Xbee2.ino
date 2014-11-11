@@ -1,4 +1,4 @@
-#include <SdFat.h>
+#include <EEPROM.h>
 #include <Dispositif.h>
 
 // how much serial data we expect before a newline
@@ -10,7 +10,7 @@ Dispositif dispositif;
 void setup ()
 {
   Serial.begin(9600);
-  
+  //delay(1000);
   Serial.println("Cool");
 } // end of setup
 
@@ -22,10 +22,11 @@ void process_data (const char * data, unsigned int input_pos)
   uint8_t currentZone;
   char c;
   
-  /*if(data[0] != '<')
+  if(data[0] != '<')
+  {
     i = peekNextP(data);
-  */
-  /*while (data[i] != '<' && i < input_pos - 3)
+  }
+  while (data[i] != '>' && i < input_pos - 3)
   {
     // zone
     value = 0;
@@ -37,8 +38,8 @@ void process_data (const char * data, unsigned int input_pos)
         value = value * 10 + c - '0';
     } while(c >= '0' && c <= '9');
     currentZone = value;
-    Serial.print(currentZone);
-    Serial.print(F("("));
+    //Serial.print(currentZone);
+    //Serial.print(F("("));
     
     // 1st order
     value = 0;
@@ -49,12 +50,12 @@ void process_data (const char * data, unsigned int input_pos)
       if(c >= '0' && c <= '9')        // is c a digit?
         value = value * 10 + c - '0';
     } while(c >= '0' && c <= '9');
-    Serial.print(value);
-    Serial.print(F(","));
+    //Serial.print(value);
+    //Serial.print(F(","));
     
-    if (currentZone == dispositif.zone.toInt())
+    if (currentZone == dispositif.zone) {
       dispositif.setBrightness(0, value);
-    
+    }
     // 2nd order
     value = 0;
     i = peekNextDigit(data, i);
@@ -64,10 +65,10 @@ void process_data (const char * data, unsigned int input_pos)
       if(c >= '0' && c <= '9')        // is c a digit?
         value = value * 10 + c - '0';
     } while(c >= '0' && c <= '9');
-    Serial.print(value);
-    Serial.print(F(","));
+    //Serial.print(value);
+    //Serial.print(F(","));
     
-    if (currentZone == dispositif.zone.toInt())
+    if (currentZone == dispositif.zone)
       dispositif.setBrightness(1, value);
       
     // 3nd order
@@ -79,13 +80,13 @@ void process_data (const char * data, unsigned int input_pos)
       if(c >= '0' && c <= '9')        // is c a digit?
         value = value * 10 + c - '0';
     } while(c >= '0' && c <= '9');
-    Serial.print(value);
-    Serial.println(F(")"));
+    //Serial.print(value);
+    //Serial.println(F(")"));
     
-    if (currentZone == dispositif.zone.toInt())
+    if (currentZone == dispositif.zone)
       dispositif.setBrightness(2, value);
   }
-  */
+  
 }  // end of process_data
 
 /*uint8_t parseIntC(const char* data, uint8_t i)
@@ -114,17 +115,17 @@ uint8_t peekNextDigit(const char* data, uint8_t i)
     ++i;
   }
 }
-/*
+
 uint8_t peekNextP(const char* data)
 {
-  int c;
+  uint8_t c;
   uint8_t i = 0;
   while (1) {
     c = data[i];
     ++i;
     if (c == ')') return i;
   }
-}*/
+}
 
 void processIncomingByte (const byte inByte)
 {
@@ -159,7 +160,7 @@ void processIncomingByte (const byte inByte)
 void loop()
 {
   
-  Serial.println("Coucou");
+  //Serial.println("Coucou");
   // if serial data available, process it
   if (Serial.available () > 0)
     processIncomingByte (Serial.read ());

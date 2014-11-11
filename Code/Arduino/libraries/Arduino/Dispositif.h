@@ -21,24 +21,24 @@ class Dispositif
   public:
     /*
      * Constructor of a led driver on pins 5, 6 and 9 and assigns the zone, id
-     * and idNode that are stored in the config.txt on the SD card.
+     * and idNode that are stored in the EEPROM.
      */
     Dispositif();
-    
+
     /*
      * Constructor of a led driver on pins 5, 6 and 9 and assigns the zone, id
-     * and idNode that are passed as parameters. Zone, id and idNode are also
-     * stored in the config.txt file.
+     * and idNode that are passed as parameters. Zone, id and idNode are then
+     * stored in the EEPROM.
      */
-    Dispositif(String, String, String);
+    Dispositif(uint8_t, uint8_t, uint8_t);
 
     /*
      * SUDO operation
      * Execute one of the following sudo actions (string) :
      * 	- jour : turn the light on
      *  - nuit : turn the light off
-     *  - blink : invert brightness each time the Arduino connects 
-     *				to the server 
+     *  - blink : invert brightness each time the Arduino connects
+     *				to the server
      *  - harlem : turn the light on then off on a special frequency
      *           which progressively gets lower.
      */
@@ -47,28 +47,28 @@ class Dispositif
     /*
      * Set Brightness of Led Driver
      * number : # of the lamp
-     * value : intensity in 0-255 
+     * value : intensity in 0-255
      */
     void setBrightness(uint8_t number, uint8_t value);
 
     /*
      * Parses the message sent from the remote server.
-     * Message takes the following form : 
+     * Message takes the following form :
      * zone#(r%, g%, b%)zone#(r%, g%, b%)zone#(r%, g%, b%)...
      */
-    void parseMessage(String code);
-    
+    //void parseMessage(String code);
+
     /*
      * Parses the message sent from the remote server.
-     * Message takes the following form : 
+     * Message takes the following form :
      * zone#(r%, g%, b%)zone#(r%, g%, b%)zone#(r%, g%, b%)...
      */
-    void changeZone(String newZone);
-    
+    //void changeZone(String newZone);
+
     //void digitalWriteC(uint8_t pin, uint8_t val);
-    
+
     // zone of the Driver
-    String zone, id, idNode;
+    uint8_t zone, id, idNode;
 
   private:
     // Pins on which the output will be located
@@ -78,10 +78,10 @@ class Dispositif
     //boolean ledOn;
 
     // To know if we see the zone of order or the order.
-    boolean orderZone;
+    //boolean orderZone;
 
     // To know if the current zone order is the same as Arduino zone.
-    boolean zoneMatch;
+    //boolean zoneMatch;
 };
 
 #endif
