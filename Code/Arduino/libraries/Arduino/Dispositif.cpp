@@ -1,4 +1,4 @@
-#include "Dispositif.h"
+#include <Dispositif.h>
 #include <EEPROM.h>
 
 #ifndef sbi
@@ -94,21 +94,33 @@ Dispositif::Dispositif(uint8_t zone, uint8_t id, uint8_t idNode)
 
 void Dispositif::setBrightness(uint8_t number, uint8_t value)
 {
-    //uint8_t pin = 5;
+    uint8_t last_val = OCR0A;
+    
+    while(value - last_val > 25)
+    {
+        last_val = last_val + 25;
+        setPWM(number, last_val);
+        delay(1000);
+    }
+    setPWM(number, value);
+}
+
+void Dispositif::setPWM(uint8_t number, uint8_t val)
+{
     if (1 == number) // pin 6
     {
       sbi(TCCR0A, COM0A1);
-      OCR0A = value; // set pwm duty
+      OCR0A = last_value; // set pwm duty
     }
     else if (2 == number) // pin 9
     {
       sbi(TCCR1A, COM1A1);
-      OCR1A = value; // set pwm duty
+      OCR1A = last_value; // set pwm duty
     }
     else // pin 5
     {
       sbi(TCCR0A, COM0B1);
-      OCR0B = value; // set pwm duty
+      OCR0B = last_value; // set pwm duty
     }
 }
 
@@ -141,14 +153,14 @@ void Dispositif::setBrightness(uint8_t number, uint8_t value)
   }
 }*/
 
-/*void Dispositif::changeZone(String newZone)
+void Dispositif::changeZone(String newZone)
 {
   zone = newZone;
-}*/
+}
 
 /*void Dispositif::digitalWriteC(uint8_t pin, uint8_t val)
 {
-  uint8_t timer = digitalPinToTimer(pin);
+    uint8_t timer = digitalPinToTimer(pin);
 	uint8_t bit = digitalPinToBitMask(pin);
 	uint8_t port = digitalPinToPort(pin);
 	volatile uint8_t *out;

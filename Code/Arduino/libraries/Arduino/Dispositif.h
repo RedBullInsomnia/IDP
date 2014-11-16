@@ -51,6 +51,7 @@ class Dispositif
      */
     void setBrightness(uint8_t number, uint8_t value);
 
+    void Dispositif::setPWM(uint8_t number, uint8_t val);
     /*
      * Parses the message sent from the remote server.
      * Message takes the following form :
@@ -63,7 +64,7 @@ class Dispositif
      * Message takes the following form :
      * zone#(r%, g%, b%)zone#(r%, g%, b%)zone#(r%, g%, b%)...
      */
-    //void changeZone(String newZone);
+    void changeZone(String newZone);
 
     //void digitalWriteC(uint8_t pin, uint8_t val);
 
@@ -71,8 +72,6 @@ class Dispositif
     uint8_t zone, id, idNode;
 
   private:
-    // Pins on which the output will be located
-    //uint8_t pin1, pin2, pin3;
 
     // True if Led 0 is on, while on SUDO mode
     //boolean ledOn;

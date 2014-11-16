@@ -65,8 +65,8 @@ void process_data (const char * data, unsigned int input_pos)
       if(c >= '0' && c <= '9')        // is c a digit?
         value = value * 10 + c - '0';
     } while(c >= '0' && c <= '9');
-    //Serial.print(value);
-    //Serial.print(F(","));
+    Serial.print(value);
+    Serial.print(F(","));
     
     if (currentZone == dispositif.zone)
       dispositif.setBrightness(1, value);
@@ -80,8 +80,8 @@ void process_data (const char * data, unsigned int input_pos)
       if(c >= '0' && c <= '9')        // is c a digit?
         value = value * 10 + c - '0';
     } while(c >= '0' && c <= '9');
-    //Serial.print(value);
-    //Serial.println(F(")"));
+    Serial.print(value);
+    Serial.println(F(")"));
     
     if (currentZone == dispositif.zone)
       dispositif.setBrightness(2, value);
