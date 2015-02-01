@@ -92,20 +92,7 @@ Dispositif::Dispositif(uint8_t zone, uint8_t id, uint8_t idNode)
   }
 }*/
 
-void Dispositif::setBrightness(uint8_t number, uint8_t value)
-{
-    uint8_t last_val = OCR0A;
-    
-    while(value - last_val > 25)
-    {
-        last_val = last_val + 25;
-        setPWM(number, last_val);
-        delay(1000);
-    }
-    setPWM(number, value);
-}
-
-void Dispositif::setPWM(uint8_t number, uint8_t val)
+void Dispositif::setBrightness(uint8_t number, uint8_t val)
 {
     if (1 == number) // pin 6
     {

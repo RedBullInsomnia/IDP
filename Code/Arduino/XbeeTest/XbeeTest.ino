@@ -1,3 +1,6 @@
+# November 2014
+# Testing connectivity between xbees
+
 void setup() {
   Serial.begin(9600);
 }

@@ -51,7 +51,7 @@ class Dispositif
      */
     void setBrightness(uint8_t number, uint8_t value);
 
-    void Dispositif::setPWM(uint8_t number, uint8_t val);
+   // void Dispositif::setPWM(uint8_t number, uint8_t val);
     /*
      * Parses the message sent from the remote server.
      * Message takes the following form :
